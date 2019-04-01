@@ -5,6 +5,7 @@ import __future__
 import numpy as np
 import pandas as pd
 import math #for nan check
+import pickle # for saving the model
 from datetime import *
 
 
@@ -74,7 +75,7 @@ def preprocess(df):
     # remove rows with nans - results in removal of 7390 rows (from 14843 to 7453)
     df = df.loc[df.TRAFFIC_CONTROL_CONDITION.apply(type) != float]
     df = df.loc[df.TRAFFIC_CONTROL.apply(type) != float]
-
+    
     # remove rows where the surface condition is dry, only concerned with classifying non-dry surfaces
     df = df.drop(df[df.TARGET == '01'].index)
 
@@ -109,13 +110,16 @@ def train(df):
 
     print(classifier.score(X_test, y_test))
 
+    # ---------------------------------------- Save Model------------------------------------
+    filename = 'finalized_model.sav'
+    pickle.dump(classifier, open(filename, 'wb'))
 
     # ---------------------------------------- Graph of prediction ------------------------------------
     # plt.scatter(y_test, predictions)
     # plt.xlabel('True Values')
     # plt.ylabel('Predictions')
     # plt.show()
-    
+
 
 
 
