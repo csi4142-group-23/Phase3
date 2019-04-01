@@ -75,6 +75,7 @@ def preprocess(df):
     df = df.loc[df.TRAFFIC_CONTROL_CONDITION.apply(type) != float]
     df = df.loc[df.TRAFFIC_CONTROL.apply(type) != float]
 
+    # remove rows where the surface condition is dry, only concerned with classifying non-dry surfaces
     df = df.drop(df[df.TARGET == '01'].index)
 
     return df
@@ -110,10 +111,10 @@ def train(df):
 
 
     # ---------------------------------------- Graph of prediction ------------------------------------
-    #plt.scatter(y_test, predictions)
-    #plt.xlabel('True Values')
-    #plt.ylabel('Predictions')
-    #plt.show()
+    plt.scatter(y_test, predictions)
+    plt.xlabel('True Values')
+    plt.ylabel('Predictions')
+    plt.show()
     
 
 
