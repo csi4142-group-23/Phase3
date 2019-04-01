@@ -111,6 +111,19 @@ def train(df):
     # plt.ylabel('Predictions')
     # plt.show()
 
+def evaluate(model, x, y):
+    # Load the saved model and X and Y testing sets
+    classifier = pickle.load(open(model, 'rb'))
+    X_test = pickle.load(open(x, 'rb'))
+    y_test = pickle.load(open(y, 'rb'))
+
+    # Precision
+
+    # Accuracy
+
+    # Recall 
+    print(classifier.score(X_test, y_test))
+
 
 ''' ----------------------------------------------------------------------------------------
     ------------------------------------- MAIN PROGRAM ------------------------------------- 
@@ -123,10 +136,8 @@ pd.set_option('display.expand_frame_repr', False) # --- display whole dataframe
 
 np.set_printoptions(threshold=np.inf)
 
-df = pd.read_csv("2014collisionsfinal.csv")
-df = preprocess(df)
+# df = pd.read_csv("2014collisionsfinal.csv")
+# df = preprocess(df)
 
-# drop rows with missing values
-#df = df.dropna(inplace=True)
-
-train(df)
+# train(df)
+evaluate('finalized_model.sav', 'X_test.sav', 'y_test.sav')
