@@ -8,6 +8,7 @@ from datetime import *
 from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import precision_score, recall_score, accuracy_score
 
 from sklearn.multiclass import OneVsRestClassifier
 from sklearn.svm import LinearSVC
@@ -114,15 +115,18 @@ def train(df):
 def evaluate(model, x, y):
     # Load the saved model and X and Y testing sets
     classifier = pickle.load(open(model, 'rb'))
-    X_test = pickle.load(open(x, 'rb'))
-    y_test = pickle.load(open(y, 'rb'))
+    X_test = pickle.load(open(x, 'rb')) # Input features
+    y_test = pickle.load(open(y, 'rb')) # True outputs
 
-    # Precision
+    predictions = classifier.predict(X_test)
 
     # Accuracy
 
+    # Precision
+
     # Recall 
-    print(classifier.score(X_test, y_test))
+
+    # Maybe determine the most important features for classification
 
 
 ''' ----------------------------------------------------------------------------------------
