@@ -1,25 +1,13 @@
 # Group 23
-
-import __future__
-
 import numpy as np
 import pandas as pd
-import math #for nan check
 import pickle # for saving the model
 from datetime import *
-
 
 # Classifiers
 from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.linear_model import LogisticRegression
-from sklearn.feature_extraction.text import TfidfTransformer
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.ensemble import AdaBoostClassifier
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.dummy import DummyClassifier
 
 from sklearn.multiclass import OneVsRestClassifier
 from sklearn.svm import LinearSVC
@@ -122,6 +110,7 @@ def train(df):
     # plt.xlabel('True Values')
     # plt.ylabel('Predictions')
     # plt.show()
+
 
 ''' ----------------------------------------------------------------------------------------
     ------------------------------------- MAIN PROGRAM ------------------------------------- 
