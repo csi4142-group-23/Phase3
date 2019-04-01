@@ -111,17 +111,17 @@ def train(df):
     print(classifier.score(X_test, y_test))
 
     # ---------------------------------------- Save Model------------------------------------
+    # Export the model and export the scaled input and output testing features
     filename = 'finalized_model.sav'
     pickle.dump(classifier, open(filename, 'wb'))
+    pickle.dump(X_test, open('X_test.sav', 'wb'))
+    pickle.dump(y_test, open('y_test.sav', 'wb'))
 
     # ---------------------------------------- Graph of prediction ------------------------------------
     # plt.scatter(y_test, predictions)
     # plt.xlabel('True Values')
     # plt.ylabel('Predictions')
     # plt.show()
-
-
-
 
 ''' ----------------------------------------------------------------------------------------
     ------------------------------------- MAIN PROGRAM ------------------------------------- 
