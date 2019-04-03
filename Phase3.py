@@ -93,8 +93,8 @@ def preprocess(df):
     #df = df.drop(df[df.TARGET == '01'].index) # DROP DRy
 
 
-    print(len(df[ (df['TARGET']==0) ]))
-    print(len(df[ (df['TARGET']==1) ]))
+    print(len(df[ (df['TARGET']==0) ])) # 4974
+    print(len(df[ (df['TARGET']==1) ])) # 2479
     return df
 
 
@@ -139,13 +139,16 @@ def train(df):
     print("======== Cross Validated Scores: ========")
 
     scores = cross_val_score(classifier, X_test, y_test, cv=5, scoring='recall')
-    print('recall_score: ' + str(scores.mean()))
+    print('recall: ' + str(scores.mean()))
 
     scores = cross_val_score(classifier, X_test, y_test, cv=5, scoring='accuracy')
-    print('recall_score: ' + str(scores.mean()))
+    print('accuracy: ' + str(scores.mean()))
 
     scores = cross_val_score(classifier, X_test, y_test, cv=5, scoring='precision')
-    print('recall_score: ' + str(scores.mean()))
+    print('precision: ' + str(scores.mean()))
+
+    scores = cross_val_score(classifier, X_test, y_test, cv=5, scoring='f1')
+    print('f1: ' + str(scores.mean()))
 
     # ---------------------------------------- Graph of prediction ------------------------------------
     #plt.scatter(y_test, predictions)
