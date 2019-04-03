@@ -1,21 +1,42 @@
 # Group 23
+
+import __future__
+
 import numpy as np
 import pandas as pd
-import pickle # for saving the model
+import math #for nan check
 from datetime import *
+
 
 # Classifiers
 from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import precision_score, recall_score, accuracy_score
+from sklearn.feature_extraction.text import TfidfTransformer
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.ensemble import AdaBoostClassifier
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.dummy import DummyClassifier
 
+
+
+#Cross-validation and tuning
+from sklearn.model_selection import cross_val_score
+
+
+from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score, roc_auc_score, roc_curve
 from sklearn.multiclass import OneVsRestClassifier
 from sklearn.svm import LinearSVC
 
 import matplotlib.pyplot as plt
 
 from sklearn.preprocessing import StandardScaler
+
+from warnings import simplefilter
+# ignore all future warnings
+simplefilter(action='ignore', category=FutureWarning)
 
 def preprocess(df):
     df = df.drop(['COLLISION_ID','LOCATION','X','Y'], 1)
@@ -40,7 +61,11 @@ def preprocess(df):
         df.at[index, 'LIGHT'] = row['LIGHT'][:2]
 
         # SURFACE CONDITION
-        df.at[index, 'SURFACE_CONDITION'] = row['SURFACE_CONDITION'][:2]
+        if (row['SURFACE_CONDITION'][:2] == '01'):
+            #df.at[index, 'SURFACE_CONDITION'] = row['SURFACE_CONDITION'][:2]
+            df.at[index, 'SURFACE_CONDITION'] = 0
+        else:
+            df.at[index, 'SURFACE_CONDITION'] = 1
 
         # TRAFFIC CONTROL
         if ( not isinstance(row['TRAFFIC_CONTROL'], float) ):
@@ -64,10 +89,12 @@ def preprocess(df):
     # remove rows with nans - results in removal of 7390 rows (from 14843 to 7453)
     df = df.loc[df.TRAFFIC_CONTROL_CONDITION.apply(type) != float]
     df = df.loc[df.TRAFFIC_CONTROL.apply(type) != float]
-    
-    # remove rows where the surface condition is dry, only concerned with classifying non-dry surfaces
-    df = df.drop(df[df.TARGET == '01'].index)
 
+    #df = df.drop(df[df.TARGET == '01'].index) # DROP DRy
+
+
+    print(len(df[ (df['TARGET']==0) ]))
+    print(len(df[ (df['TARGET']==1) ]))
     return df
 
 
@@ -78,6 +105,7 @@ def train(df):
 
     features = ['DATE','TIME','ENVIRONMENT','LIGHT','TRAFFIC_CONTROL','TRAFFIC_CONTROL_CONDITION', 'COLLISION_CLASSIFICATION', 'IMPACT_TYPE']
     target = 'TARGET'
+    df[target] = df[target].astype('int')
 
     # ---------------------------------------- train model ------------------------------------
     X_train, X_test, y_train, y_test = train_test_split(df[features], df[target], test_size=0.33)  # for personal testing (will not be used in final program)
@@ -87,7 +115,9 @@ def train(df):
 
     #X_test = X_test.fillna(X_train.mean())
 
-    classifier = OneVsRestClassifier(LinearSVC())
+    #classifier = OneVsRestClassifier(LinearSVC()) # performance: ~67-74%
+    classifier = LogisticRegression(C=70, class_weight='balanced')
+    # classifier = DummyClassifier(strategy='stratified') # performance: ~45%
     classifier.fit(X_train, y_train)
 
 
@@ -95,38 +125,35 @@ def train(df):
     # ---------------------------------------- results ------------------------------------
     X_test = scaler.fit(X_test).transform(X_test)
     predictions = classifier.predict(X_test)
-    print(predictions)
+    #print(predictions)
 
-    print(classifier.score(X_test, y_test))
+    #print(classifier.score(X_test, y_test))
+    # try print recall
+    print('recall_score: ' + str(recall_score(y_test, predictions)))
+    print('accuracy_score: ' + str(accuracy_score(y_test, predictions)))
+    print('precision_score: ' + str(precision_score(y_test, predictions)))
+    print('f1_score: ' + str(f1_score(y_test, predictions)))
+    print('roc_auc: ' + str(roc_auc_score(y_test, predictions)))
 
-    # ---------------------------------------- Save Model------------------------------------
-    # Export the model and export the scaled input and output testing features
-    filename = 'finalized_model.sav'
-    pickle.dump(classifier, open(filename, 'wb'))
-    pickle.dump(X_test, open('X_test.sav', 'wb'))
-    pickle.dump(y_test, open('y_test.sav', 'wb'))
+
+    print("======== Cross Validated Scores: ========")
+
+    scores = cross_val_score(classifier, X_test, y_test, cv=5, scoring='recall')
+    print('recall_score: ' + str(scores.mean()))
+
+    scores = cross_val_score(classifier, X_test, y_test, cv=5, scoring='accuracy')
+    print('recall_score: ' + str(scores.mean()))
+
+    scores = cross_val_score(classifier, X_test, y_test, cv=5, scoring='precision')
+    print('recall_score: ' + str(scores.mean()))
 
     # ---------------------------------------- Graph of prediction ------------------------------------
-    # plt.scatter(y_test, predictions)
-    # plt.xlabel('True Values')
-    # plt.ylabel('Predictions')
-    # plt.show()
+    #plt.scatter(y_test, predictions)
+    #plt.xlabel('True Values')
+    #plt.ylabel('Predictions')
+    #plt.show()
+    
 
-def evaluate(model, x, y):
-    # Load the saved model and X and Y testing sets
-    classifier = pickle.load(open(model, 'rb'))
-    X_test = pickle.load(open(x, 'rb')) # Input features
-    y_test = pickle.load(open(y, 'rb')) # True outputs
-
-    predictions = classifier.predict(X_test)
-
-    # Accuracy
-
-    # Precision
-
-    # Recall 
-
-    # Maybe determine the most important features for classification
 
 
 ''' ----------------------------------------------------------------------------------------
@@ -140,8 +167,11 @@ pd.set_option('display.expand_frame_repr', False) # --- display whole dataframe
 
 np.set_printoptions(threshold=np.inf)
 
-# df = pd.read_csv("2014collisionsfinal.csv")
-# df = preprocess(df)
 
-# train(df)
-evaluate('finalized_model.sav', 'X_test.sav', 'y_test.sav')
+df = pd.read_csv("2014collisionsfinal.csv")
+df = preprocess(df)
+
+# drop rows with missing values
+#df = df.dropna(inplace=True)
+
+train(df)
