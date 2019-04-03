@@ -117,6 +117,7 @@ def train(df):
 
     #classifier = OneVsRestClassifier(LinearSVC()) # performance: ~67-74%
     classifier = LogisticRegression(C=70, class_weight='balanced')
+    #classifier = KNeighborsClassifier(n_neighbors=3, n_jobs=2)
     # classifier = DummyClassifier(strategy='stratified') # performance: ~45%
     classifier.fit(X_train, y_train)
 
