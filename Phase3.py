@@ -165,6 +165,13 @@ def train(df):
     scores = cross_val_score(dummy, df[features], df[target], cv=5, scoring='f1')
     print('f1: ' + str(scores.mean()))
 
+    # ---------------------------------------- Graph Feature Coefficients------------------------------
+    features = ['DATE','TIME','ENVIRONMENT','LIGHT','TRAFFIC_CONTROL','TRAFFIC_CONTROL_CONDITION', 'COLLISION_CLASSIFICATION', 'IMPACT_TYPE']
+    pd.Series(abs(classifier.coef_[0]), index=features).nlargest(10).plot(kind='barh')
+    plt.subplots_adjust(left=0.3)
+    plt.title("Classifier Feature Weights - Higher Values have Larger Effect")
+    plt.show()
+
     # ---------------------------------------- Graph of prediction ------------------------------------
     #plt.scatter(y_test, predictions)
     #plt.xlabel('True Values')
