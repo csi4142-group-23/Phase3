@@ -115,11 +115,10 @@ def train(df):
 
     #X_test = X_test.fillna(X_train.mean())
 
-    #classifier = OneVsRestClassifier(LinearSVC()) # performance: ~67-74%
     classifier = LogisticRegression(C=70, class_weight='balanced')
-    #classifier = KNeighborsClassifier(n_neighbors=3, n_jobs=2)
-    # classifier = DummyClassifier(strategy='stratified') # performance: ~45%
     classifier.fit(X_train, y_train)
+    dummy = DummyClassifier(strategy='stratified') # performance: ~45%
+    dummy.fit(X_train, y_train)
 
 
 
@@ -139,16 +138,31 @@ def train(df):
 
     print("======== Cross Validated Scores: ========")
 
-    scores = cross_val_score(classifier, X_test, y_test, cv=5, scoring='recall')
+    scores = cross_val_score(classifier, df[features], df[target], cv=5, scoring='recall')
     print('recall: ' + str(scores.mean()))
 
-    scores = cross_val_score(classifier, X_test, y_test, cv=5, scoring='accuracy')
+    scores = cross_val_score(classifier, df[features], df[target], cv=5, scoring='accuracy')
     print('accuracy: ' + str(scores.mean()))
 
-    scores = cross_val_score(classifier, X_test, y_test, cv=5, scoring='precision')
+    scores = cross_val_score(classifier, df[features], df[target], cv=5, scoring='precision')
     print('precision: ' + str(scores.mean()))
 
-    scores = cross_val_score(classifier, X_test, y_test, cv=5, scoring='f1')
+    scores = cross_val_score(classifier, df[features], df[target], cv=5, scoring='f1')
+    print('f1: ' + str(scores.mean()))
+
+
+    print("======== Dummy Cross Validated Scores: ========")
+
+    scores = cross_val_score(dummy, df[features], df[target], cv=5, scoring='recall')
+    print('recall: ' + str(scores.mean()))
+
+    scores = cross_val_score(dummy, df[features], df[target], cv=5, scoring='accuracy')
+    print('accuracy: ' + str(scores.mean()))
+
+    scores = cross_val_score(dummy, df[features], df[target], cv=5, scoring='precision')
+    print('precision: ' + str(scores.mean()))
+
+    scores = cross_val_score(dummy, df[features], df[target], cv=5, scoring='f1')
     print('f1: ' + str(scores.mean()))
 
     # ---------------------------------------- Graph of prediction ------------------------------------
