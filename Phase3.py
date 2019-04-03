@@ -1,14 +1,24 @@
 # Group 23
+
+import __future__
+
 import numpy as np
 import pandas as pd
-import pickle # for saving the model
+import math #for nan check
 from datetime import *
+
 
 # Classifiers
 from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import precision_score, recall_score, accuracy_score
+from sklearn.feature_extraction.text import TfidfTransformer
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.ensemble import AdaBoostClassifier
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.dummy import DummyClassifier
 
 from sklearn.multiclass import OneVsRestClassifier
 from sklearn.svm import LinearSVC
@@ -64,8 +74,7 @@ def preprocess(df):
     # remove rows with nans - results in removal of 7390 rows (from 14843 to 7453)
     df = df.loc[df.TRAFFIC_CONTROL_CONDITION.apply(type) != float]
     df = df.loc[df.TRAFFIC_CONTROL.apply(type) != float]
-    
-    # remove rows where the surface condition is dry, only concerned with classifying non-dry surfaces
+
     df = df.drop(df[df.TARGET == '01'].index)
 
     return df
@@ -99,34 +108,14 @@ def train(df):
 
     print(classifier.score(X_test, y_test))
 
-    # ---------------------------------------- Save Model------------------------------------
-    # Export the model and export the scaled input and output testing features
-    filename = 'finalized_model.sav'
-    pickle.dump(classifier, open(filename, 'wb'))
-    pickle.dump(X_test, open('X_test.sav', 'wb'))
-    pickle.dump(y_test, open('y_test.sav', 'wb'))
 
     # ---------------------------------------- Graph of prediction ------------------------------------
-    # plt.scatter(y_test, predictions)
-    # plt.xlabel('True Values')
-    # plt.ylabel('Predictions')
-    # plt.show()
+    #plt.scatter(y_test, predictions)
+    #plt.xlabel('True Values')
+    #plt.ylabel('Predictions')
+    #plt.show()
+    
 
-def evaluate(model, x, y):
-    # Load the saved model and X and Y testing sets
-    classifier = pickle.load(open(model, 'rb'))
-    X_test = pickle.load(open(x, 'rb')) # Input features
-    y_test = pickle.load(open(y, 'rb')) # True outputs
-
-    predictions = classifier.predict(X_test)
-
-    # Accuracy
-
-    # Precision
-
-    # Recall 
-
-    # Maybe determine the most important features for classification
 
 
 ''' ----------------------------------------------------------------------------------------
@@ -140,8 +129,10 @@ pd.set_option('display.expand_frame_repr', False) # --- display whole dataframe
 
 np.set_printoptions(threshold=np.inf)
 
-# df = pd.read_csv("2014collisionsfinal.csv")
-# df = preprocess(df)
+df = pd.read_csv("2014collisionsfinal.csv")
+df = preprocess(df)
 
-# train(df)
-evaluate('finalized_model.sav', 'X_test.sav', 'y_test.sav')
+# drop rows with missing values
+#df = df.dropna(inplace=True)
+
+train(df)
