@@ -11,8 +11,7 @@ instances when the road surfaces were wet, had loose or packed snow,
 were icy or covered with slush*
 
 i) Data Processing
-Preprocessing: Removed rows with null values results in reduction from 14843 to 7453 rows
-Class imbalance: Our processed data contains twice as many dry cases as there are "not dry" cases (i.e. wet, had loose or packed snow, were icy or covered with slush). To deal with the class imbalance, we used 5-fold cross validation.
+Data reduction - removed rows with null values results in reduction from 14843 to 7453 rows; Class imbalance -oOur processed data contains twice as many dry cases as there are "not dry" cases (i.e. wet, had loose or packed snow, were icy or covered with slush). To deal with the class imbalance, we used 5-fold cross validation.
 
 ii) Model Construction:
 We tested multiple classifiers including KNN, Adaboost, Random Forest, Decision Trees, and Logistic Regression. All classifiers, on average, seemed to perform reasonably well within the 70-85% range. We chose logistic regression with class_weight='balanced' (to accomodate for class imbalance) because it was a fast and simple algorithm intended for binary classification that achieved the same results as more advanced classifiers.
