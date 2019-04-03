@@ -19,3 +19,7 @@ We tested multiple classifiers including KNN, Adaboost, Random Forest, Decision 
 iii) Model Evaluation:
 5-fold cross validation on recall, accuracy, precision, and f1 score.
 Our model also performed ~40% better when compared with a dummy classifier.
+
+iv) Insights and Lessons Learned:
+Discovered that Environment, Date, and Light were the three most important features in determining whether or not an accident
+occured on wet or dry roads. This makes sense as wet accidents can only occur during or after a rain/snow storm. 
